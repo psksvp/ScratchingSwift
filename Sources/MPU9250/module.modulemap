@@ -1,0 +1,7 @@
+module MPU9250 
+{
+  header "/usr/include/MPU9250.h"
+  
+  link "MPU9250"
+  export *
+}

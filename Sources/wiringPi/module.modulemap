@@ -1,0 +1,11 @@
+module wiringPi 
+{
+  header "/usr/include/wiringPi.h"
+  header "/usr/include/wiringPiI2C.h"
+  header "/usr/include/wiringPiSPI.h"
+  header "/usr/include/wiringSerial.h"
+  header "/usr/include/wiringShift.h"
+  
+  link "wiringPi"
+  export *
+}
