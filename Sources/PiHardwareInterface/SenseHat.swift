@@ -16,6 +16,7 @@ public class SenseHat
   public static let stick = Stick()
   public static let imu = IMU()
   
+  //////////////////////////////////////////////
   public class IMU
   {
     public struct Values
@@ -103,6 +104,7 @@ public class SenseHat
     }
   }
   
+  //////////////////////////////////////////////
   public class Display
   {
     private let pixMap = [[[ 0,  1,  2,  3,  4,  5,  6,  7], // 0 degree
@@ -170,7 +172,7 @@ public class SenseHat
       let nameFile = "\(fbDir)/\(path)/name"
       switch FS.readText(fromLocalPath: nameFile)
       {
-        case .some(let text) : return "RPi-Sense FB" == text.trimmingCharacters(in: CharacterSet.controlCharacters)
+        case .some(let text) : return "RPi-Sense FB" == text.trim()
         case .none           : return false
       }
       
@@ -216,6 +218,7 @@ public class SenseHat
     }
   } //class Display
   
+  //////////////////////////////////////////////
   public class Stick
   {
     public enum Direction

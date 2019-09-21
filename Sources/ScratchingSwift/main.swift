@@ -12,6 +12,7 @@ import PiHardwareInterface
 print("Hello, World!")
 
 var keepGoing = true
+var k = 0
 
 while(keepGoing)
 {
@@ -25,6 +26,19 @@ while(keepGoing)
   if let sensors = SenseHat.imu.poll()
   {
     print(sensors.heading)
+  }
+  
+  print(RaspberryPi.cpuTemperature)
+  print(RaspberryPi.model)
+  
+  if(k > 100)
+  {
+    SenseHat.display.clear()
+    keepGoing = false
+  }
+  else
+  {
+    k = k + 1
   }
 
   // switch SenseHat.stick.read()
