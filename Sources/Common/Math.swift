@@ -38,43 +38,6 @@
 public class Math
 {
   // fancy word type constrain.
-  public class Scaler<T: FloatingPoint & Comparable> //where T : Numeric & Comparable
-  {
-    private var inRange:T
-    private var outRange:T
-    private var inMin:T
-    private var inMax:T
-    private var outMin:T
-    private var outMax:T
-    
-    public init(fromRange: (min: T, max: T), toRange: (min: T, max: T))
-    {
-      inRange = fromRange.max - fromRange.min
-      outRange = toRange.max - toRange.min
-      inMin = fromRange.min
-      inMax = fromRange.max
-      outMin = toRange.min
-      outMax = toRange.max
-    }
-    
-    public subscript(value: T) -> T
-    {
-      if(value < inMin)
-      {
-        return outMin
-      }
-      else if(value > inMax)
-      {
-        return outMax
-      }
-      else
-      {
-        return (((value - inMin) * outRange) / inRange) + outMin
-      }
-    }
-    
-  }
-  
   public class NumericScaler<T: FloatingPoint & Comparable>
   {
     private var fromRange: ClosedRange<T>
