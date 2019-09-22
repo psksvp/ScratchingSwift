@@ -222,15 +222,77 @@ public class Adafruit
   }
   
   ///////////////////////
-  // public class ServoHat
-  // {
-  //   public class RangedDevice
-  //   {
-  //      // unsure why raw range is 150 to 600, just copy from adafruit code
-  //     init(logicalRange: Range, rawRange: Range = 145 ... 650)
-  //     {
-  //
-  //     }
-  //   }
-  // }
+  public class ServoHat
+  {
+    public class RangedDevice
+    {
+      private var scaler: Math.NumericScaler<Double>
+      private var channel: Int
+      private var servoHat: ServoHat
+      
+       // unsure why raw range is 150 to 600, just copy from adafruit code
+      init(channel:Int, servoHat: ServoHat, logicalRange: ClosedRange<Double>, rawRange: ClosedRange<Double> = 145.0 ... 650.0)
+      {
+        self.scaler = Math.NumericScaler<Double>(fromRange: logicalRange, toRange: rawRange)
+        self.channel = channel
+        self.servoHat = servoHat
+      }
+      
+      public func set(value: Int) -> Void
+      {
+        let sc = scaler[Double(value)]
+        servoHat.pwmI2C.send(channel, 0, Int(sc))
+      }
+      
+    } // class RangedDevice
+    
+    public class Servo : RangedDevice
+    {
+      private var currentAngle = 0
+      
+      init(channel: Int, servoHat: ServoHat)
+      {
+        super.init(channel: channel, servoHat: servoHat, logicalRange: 0...180)
+      }
+      
+      public var angle: Int
+      {
+        get
+        {
+          return currentAngle
+        }
+        
+        set(newAngle)
+        {
+          if(currentAngle != newAngle)
+          {
+            currentAngle = newAngle
+            super.set(value: newAngle)
+          }
+        }
+      }
+    } // class Servo
+    
+    private var pwmI2C: PWMI2CBus
+    private var servos = [Int : Servo]()
+    
+    public init(address: Int = 0x40)
+    {
+      pwmI2C = PWMI2CBus(frequency: 60, i2cAddress: address)
+    }
+    
+    public func servo(channel: Int) -> Servo
+    {
+      if let s = servos[channel]
+      {
+        return s
+      }
+      else
+      {
+        let s = Servo(channel: channel, servoHat: self)
+        servos[channel] = s
+        return s
+      }
+    }
+  }
 }

@@ -82,7 +82,7 @@ public class SenseHat
       public var accelerometer: Vector
       public var compass: Vector
       
-      public var heading: (Double, Double)
+      public var heading: (Degee: Double, Minute: Double)
       {
         get
         {

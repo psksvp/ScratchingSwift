@@ -37,5 +37,73 @@
 
 public class Math
 {
+  // fancy word type constrain.
+  public class Scaler<T: FloatingPoint & Comparable> //where T : Numeric & Comparable
+  {
+    private var inRange:T
+    private var outRange:T
+    private var inMin:T
+    private var inMax:T
+    private var outMin:T
+    private var outMax:T
+    
+    public init(fromRange: (min: T, max: T), toRange: (min: T, max: T))
+    {
+      inRange = fromRange.max - fromRange.min
+      outRange = toRange.max - toRange.min
+      inMin = fromRange.min
+      inMax = fromRange.max
+      outMin = toRange.min
+      outMax = toRange.max
+    }
+    
+    public subscript(value: T) -> T
+    {
+      if(value < inMin)
+      {
+        return outMin
+      }
+      else if(value > inMax)
+      {
+        return outMax
+      }
+      else
+      {
+        return (((value - inMin) * outRange) / inRange) + outMin
+      }
+    }
+    
+  }
   
+  public class NumericScaler<T: FloatingPoint & Comparable>
+  {
+    private var fromRange: ClosedRange<T>
+    private var toRange: ClosedRange<T> 
+    private var fromRangeLength: T
+    private var toRangeLength: T
+    
+    public init(fromRange: ClosedRange<T>, toRange: ClosedRange<T>)
+    {
+      self.fromRange = fromRange
+      self.toRange = toRange
+      fromRangeLength = fromRange.upperBound - fromRange.lowerBound
+      toRangeLength = toRange.upperBound - toRange.lowerBound
+    }
+    
+    public subscript(value: T) -> T
+    {
+      if(value < fromRange.lowerBound)
+      {
+        return toRange.lowerBound
+      }
+      else if(value > fromRange.upperBound)
+      {
+        return toRange.upperBound
+      }
+      else
+      {
+        return (value - fromRange.lowerBound) * toRangeLength / fromRangeLength + toRange.lowerBound
+      }
+    }
+  }
 }
