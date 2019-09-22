@@ -1,3 +1,40 @@
+/*
+ *  The BSD 3-Clause License
+ *  Copyright (c) 2018. by Pongsak Suvanpong (psksvp@gmail.com)
+ *  All rights reserved.
+ *
+ *  Redistribution and use in source and binary forms, with or without modification,
+ *  are permitted provided that the following conditions are met:
+ *
+ *  1. Redistributions of source code must retain the above copyright notice,
+ *  this list of conditions and the following disclaimer.
+ *
+ *  2. Redistributions in binary form must reproduce the above copyright notice,
+ *  this list of conditions and the following disclaimer in the documentation
+ *  and/or other materials provided with the distribution.
+ *
+ *  3. Neither the name of the copyright holder nor the names of its contributors may
+ *  be used to endorse or promote products derived from this software without
+ *  specific prior written permission.
+ *
+ *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ *  ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ *  WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+ *  IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+ *  INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ *  (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ *  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ *  THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ *  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+ *  EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * This information is provided for personal educational purposes only.
+ *
+ * The author does not guarantee the accuracy of this information.
+ *
+ * By using the provided information, libraries or software, you solely take the risks of damaging your hardwares.
+ */
+
 import Foundation 
 import Common
 
@@ -104,6 +141,7 @@ public class Adafruit
       private var pwmPin = 0
       private var in1Pin = 0
       private var in2Pin = 0
+      private var powerState = 10
       private var motorHat:MotorHat 
       
       init(channel: Int, motorHat: MotorHat)
@@ -136,12 +174,29 @@ public class Adafruit
         }
       }
       
-      public func setPower(p: Int) -> Void
+      public func setPower(_ p: Int) -> Void
       { 
         motorHat.pwmI2C.send(pwmPin, 0, p.clamped(to: 0 ... 255) * 16)
       }
       
-    }
+      public var power: Int 
+      {
+        get
+        {
+          return powerState
+        }
+        
+        set(newPowerState)
+        {
+          if(newPowerState != powerState)
+          {
+            powerState = newPowerState.clamped(to: 0 ... 255)
+            motorHat.pwmI2C.send(pwmPin, 0, powerState * 16)
+          }
+        }
+      }
+      
+    } // class DCMotor
     
     private var pwmI2C: PWMI2CBus
     private var motors = [Int : DCMotor]()
@@ -165,4 +220,17 @@ public class Adafruit
       }
     }
   }
+  
+  ///////////////////////
+  // public class ServoHat
+  // {
+  //   public class RangedDevice
+  //   {
+  //      // unsure why raw range is 150 to 600, just copy from adafruit code
+  //     init(logicalRange: Range, rawRange: Range = 145 ... 650)
+  //     {
+  //
+  //     }
+  //   }
+  // }
 }

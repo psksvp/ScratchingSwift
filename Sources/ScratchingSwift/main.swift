@@ -40,27 +40,30 @@ while(keepGoing)
   {
     k = k + 1
   }
+}
 
-  // switch SenseHat.stick.read()
-  // {
-  //   case .some(let key) : print(key)
-  //                         if(key == .push)
-  //                         {
-  //                           print("exit")
-  //                           SenseHat.display.clear()
-  //                           keepGoing = false
-  //                         }
-  //   case .none          : print("no key")
-  // }
+let motorHat = Adafruit.MotorHat()
+let m2 = motorHat.motor(channel: 2)
+m2.power = 10
+keepGoing = true
+while(keepGoing)
+{
+  if let key = SenseHat.stick.read()
+  {
+    switch key
+    {
+      case .up    : m2.run(command: .forward)
+      case .down  : m2.run(command: .reverse)
+      case .right : m2.power = m2.power + 5
+      case .left  : m2.power = m2.power - 5 
+      case .push  : m2.run(command: .stop)
+                    keepGoing = false                          
+    }
+  }
 }
 
 
-// switch FS.readBytes(inFile: "/home/pi/workspace/test/Simple.swift", length: 16)
-// {
-//   case .some(let buffer) : print(buffer.count)
-//                            print(buffer)
-//   case .none             : print("boom")
-// }
+
 
 
 
