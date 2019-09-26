@@ -25,8 +25,14 @@ func testScaling() -> Void
 func testMotorHat() -> Void
 {
   let motorHat = Adafruit.MotorHat()
-  let m2 = motorHat.motor(channel: 2)
+  let m1 = motorHat.motor(atPort: .m1)
+  let m2 = motorHat.motor(atPort: .m2)
+  let m3 = motorHat.motor(atPort: .m3)
+  let m4 = motorHat.motor(atPort: .m4)
+  m1.power = 10
   m2.power = 10
+  m3.power = 10
+  m4.power = 10
   var keepGoing = true
   while(keepGoing)
   {
@@ -34,12 +40,32 @@ func testMotorHat() -> Void
     {
       switch key
       {
-        case .up    : m2.run(command: .forward)
-        case .down  : m2.run(command: .reverse)
-        case .right : m2.power = m2.power + 5
-        case .left  : m2.power = m2.power - 5 
-        case .push  : m2.run(command: .stop)
-                      keepGoing = false                          
+        case .up    : 
+          m1.run(command: .forward)
+          m2.run(command: .forward)
+          m3.run(command: .forward)
+          m4.run(command: .forward)
+        case .down  : 
+          m1.run(command: .reverse)
+          m2.run(command: .reverse)
+          m3.run(command: .reverse)
+          m4.run(command: .reverse)
+        case .right :
+          m1.power = m3.power + 5
+          m2.power = m3.power + 5
+          m3.power = m3.power + 5
+          m4.power = m3.power + 5
+        case .left  : 
+          m1.power = m3.power - 5 
+          m2.power = m3.power - 5 
+          m3.power = m3.power - 5 
+          m4.power = m3.power - 5 
+        case .push  : 
+          m1.run(command: .stop)
+          m2.run(command: .stop)
+          m3.run(command: .stop)
+          m4.run(command: .stop)
+          keepGoing = false                          
       }
     }
   }
@@ -79,9 +105,35 @@ func testSenseHat() -> Void
   }
 }
 
+func testServo() -> Void
+{
+  let sh = Adafruit.ServoHat()
+  let servo = sh.servo(channel: 15)
+  servo.angle = 90
+  var keepGoing = true
+  while(keepGoing)
+  {
+    if let key = SenseHat.stick.read()
+    {
+      switch key
+      {
+        case .up    : servo.angle = servo.angle + 5
+        case .down  : servo.angle = servo.angle - 5
+        case .right : servo.angle = servo.angle + 5
+        case .left  : servo.angle = servo.angle - 5 
+        case .push  : servo.angle = 90
+                      keepGoing = false                          
+      }
+    }
+  }
+}
+
 
 print("Hello, World!")
-testScaling()
+//testScaling()
+testSenseHat()
+testMotorHat()
+//testServo()
 
 
 

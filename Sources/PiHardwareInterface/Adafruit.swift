@@ -198,24 +198,32 @@ public class Adafruit
       
     } // class DCMotor
     
+    public enum Port : Int
+    {
+      case m1 = 0
+      case m2 = 1
+      case m3 = 2
+      case m4 = 3
+    }
+    
     private var pwmI2C: PWMI2CBus
-    private var motors = [Int : DCMotor]()
+    private var motors = [Port : DCMotor]()
     
     public init(address: Int = 0x60)
     {
       pwmI2C = PWMI2CBus(frequency: 1600.0, i2cAddress: address)
     }
     
-    public func motor(channel: Int) -> DCMotor
+    public func motor(atPort port: Port) -> DCMotor
     {
-      if let m = motors[channel]
+      if let m = motors[port]
       {
         return m
       }
       else
       {
-        let m = DCMotor(channel: channel, motorHat: self)
-        motors[channel] = m
+        let m = DCMotor(channel: port.rawValue, motorHat: self)
+        motors[port] = m
         return m
       }
     }
@@ -268,6 +276,7 @@ public class Adafruit
           {
             currentAngle = newAngle
             super.set(value: newAngle)
+            print("set servo to angle \(currentAngle)")
           }
         }
       }
