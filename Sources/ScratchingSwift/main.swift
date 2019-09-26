@@ -29,10 +29,10 @@ func testMotorHat() -> Void
   let m2 = motorHat.motor(atPort: .m2)
   let m3 = motorHat.motor(atPort: .m3)
   let m4 = motorHat.motor(atPort: .m4)
-  m1.power = 10
-  m2.power = 10
-  m3.power = 10
-  m4.power = 10
+  m1.power = 30
+  m2.power = 30
+  m3.power = 30
+  m4.power = 30
   var keepGoing = true
   while(keepGoing)
   {

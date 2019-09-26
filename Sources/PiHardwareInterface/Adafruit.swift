@@ -141,7 +141,7 @@ public class Adafruit
       private var pwmPin = 0
       private var in1Pin = 0
       private var in2Pin = 0
-      private var powerState = 10
+      private var currentPower = 10
       private var motorHat:MotorHat 
       
       init(channel: Int, motorHat: MotorHat)
@@ -161,6 +161,7 @@ public class Adafruit
       
       public func run(command: Command) -> Void
       {
+        Log.info("\(self) run command -> \(command)")
         switch command
         {
           case .forward : motorHat.pwmI2C.setPin(in2Pin, 0)
@@ -170,28 +171,24 @@ public class Adafruit
                           motorHat.pwmI2C.setPin(in2Pin, 1)
                           
           case .stop    : motorHat.pwmI2C.setPin(in2Pin, 0)
-                          motorHat.pwmI2C.setPin(in1Pin, 0)                                   
+                          motorHat.pwmI2C.setPin(in1Pin, 0)                                                   
         }
-      }
-      
-      public func setPower(_ p: Int) -> Void
-      { 
-        motorHat.pwmI2C.send(pwmPin, 0, p.clamped(to: 0 ... 255) * 16)
       }
       
       public var power: Int 
       {
         get
         {
-          return powerState
+          return currentPower
         }
         
-        set(newPowerState)
+        set(newPowerLevel)
         {
-          if(newPowerState != powerState)
+          if(currentPower != newPowerLevel)
           {
-            powerState = newPowerState.clamped(to: 0 ... 255)
-            motorHat.pwmI2C.send(pwmPin, 0, powerState * 16)
+            currentPower = newPowerLevel.clamped(to: 0 ... 255)
+            motorHat.pwmI2C.send(pwmPin, 0, currentPower * 16)
+            Log.info("\(self) setPower to \(currentPower)")
           }
         }
       }
@@ -232,6 +229,7 @@ public class Adafruit
   ///////////////////////
   public class ServoHat
   {
+    //////////////////////////////////////
     public class RangedDevice
     {
       private var scaler: Math.NumericScaler<Double>
@@ -254,6 +252,7 @@ public class Adafruit
       
     } // class RangedDevice
     
+    //////////////////////////////////////
     public class Servo : RangedDevice
     {
       private var currentAngle = 90

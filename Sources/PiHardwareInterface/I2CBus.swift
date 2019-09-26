@@ -51,7 +51,7 @@ public class I2CBus
     }
     else
     {
-      Log.info("I2CBus.init connect to i2c device at \(deviceAddress)")
+      Log.info("I2CBus.init connected to i2c device at \(deviceAddress)")
     }
   }
   
