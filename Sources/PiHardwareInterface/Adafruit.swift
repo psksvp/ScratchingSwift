@@ -72,10 +72,10 @@ public class Adafruit
       sendToAllChannel(0, 0)
       writeByte(register: kMode2, data: kOutDrv)
       writeByte(register: kMode1, data: kAllCall)
-      Thread.sleep(forTimeInterval: 5.0)
+      Thread.sleep(forTimeInterval: 0.5)
       let mode1 = readByte(register: kMode1) & ~kSleep
       writeByte(register: kMode1, data: mode1)
-      Thread.sleep(forTimeInterval: 5.0)
+      Thread.sleep(forTimeInterval: 0.5)
       setFrequency(frequency)
     }
     
