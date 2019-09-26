@@ -256,11 +256,12 @@ public class Adafruit
     
     public class Servo : RangedDevice
     {
-      private var currentAngle = 0
+      private var currentAngle = 90
       
       init(channel: Int, servoHat: ServoHat)
       {
         super.init(channel: channel, servoHat: servoHat, logicalRange: 0...180)
+        super.set(value: currentAngle)
       }
       
       public var angle: Int
@@ -274,23 +275,43 @@ public class Adafruit
         {
           if(currentAngle != newAngle)
           {
-            currentAngle = newAngle
-            super.set(value: newAngle)
+            currentAngle = newAngle.clamped(to: 0...180)
+            super.set(value: currentAngle)
             print("set servo to angle \(currentAngle)")
           }
         }
       }
     } // class Servo
     
+    public enum Channel: Int
+    {
+      case ch0 = 0
+      case ch1 = 1
+      case ch2 = 2
+      case ch3 = 3
+      case ch4 = 4
+      case ch5 = 5
+      case ch6 = 6
+      case ch7 = 7
+      case ch8 = 8
+      case ch9 = 9
+      case ch10 = 10
+      case ch11 = 11
+      case ch12 = 12
+      case ch13 = 13 
+      case ch14 = 14
+      case ch15 = 15
+    }
+    
     private var pwmI2C: PWMI2CBus
-    private var servos = [Int : Servo]()
+    private var servos = [Channel : Servo]()
     
     public init(address: Int = 0x40)
     {
       pwmI2C = PWMI2CBus(frequency: 60, i2cAddress: address)
     }
     
-    public func servo(channel: Int) -> Servo
+    public func servo(channel: Channel) -> Servo
     {
       if let s = servos[channel]
       {
@@ -298,7 +319,7 @@ public class Adafruit
       }
       else
       {
-        let s = Servo(channel: channel, servoHat: self)
+        let s = Servo(channel: channel.rawValue, servoHat: self)
         servos[channel] = s
         return s
       }

@@ -51,15 +51,15 @@ func testMotorHat() -> Void
           m3.run(command: .reverse)
           m4.run(command: .reverse)
         case .right :
-          m1.power = m3.power + 5
-          m2.power = m3.power + 5
+          m1.power = m1.power + 5
+          m2.power = m2.power + 5
           m3.power = m3.power + 5
-          m4.power = m3.power + 5
+          m4.power = m4.power + 5
         case .left  : 
-          m1.power = m3.power - 5 
-          m2.power = m3.power - 5 
+          m1.power = m1.power - 5 
+          m2.power = m2.power - 5 
           m3.power = m3.power - 5 
-          m4.power = m3.power - 5 
+          m4.power = m4.power - 5 
         case .push  : 
           m1.run(command: .stop)
           m2.run(command: .stop)
@@ -108,8 +108,7 @@ func testSenseHat() -> Void
 func testServo() -> Void
 {
   let sh = Adafruit.ServoHat()
-  let servo = sh.servo(channel: 15)
-  servo.angle = 90
+  let servo = sh.servo(channel: .ch15)
   var keepGoing = true
   while(keepGoing)
   {
