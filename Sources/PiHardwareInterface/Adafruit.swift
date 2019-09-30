@@ -37,6 +37,7 @@
 
 import Foundation 
 import Common
+import Robot
 
 public class Adafruit
 {
@@ -124,15 +125,8 @@ public class Adafruit
   
   ////////////////////////////////////////////////////
   public class MotorHat
-  { 
-    public enum Command
-    {
-      case forward
-      case reverse
-      case stop
-    }
-    
-    public class DCMotor
+  {
+    public class DCMotor : Motor
     {
       private let channelConfig = [0 : (8, 9, 10),
                                    1 : (13, 12, 11),
@@ -142,6 +136,7 @@ public class Adafruit
       private var in1Pin = 0
       private var in2Pin = 0
       private var currentPower = 10
+      private var currentCommand = Motor.Command.stop
       private var motorHat:MotorHat 
       
       init(channel: Int, motorHat: MotorHat)
@@ -172,6 +167,21 @@ public class Adafruit
                           
           case .stop    : motorHat.pwmI2C.setPin(in2Pin, 0)
                           motorHat.pwmI2C.setPin(in1Pin, 0)                                                   
+        }
+      }
+      
+      public var command: Motor.Command
+      {
+        get { return currentCommand }
+        
+        set(newCommand)
+        {
+          if(currentCommand != newCommand)
+          {
+            currentCommand = newCommand
+            run(command: currentCommand)
+            Log.info("\(self) setCommnad to \(currentCommand)")
+          }
         }
       }
       

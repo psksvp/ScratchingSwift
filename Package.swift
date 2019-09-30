@@ -11,8 +11,9 @@ let package = Package(
               .testTarget(name: "ScratchingSwiftTests",
                           dependencies: ["ScratchingSwift"]),
               .target(name: "PiHardwareInterface", 
-                      dependencies: ["Common", "wiringPi", "MPU9250"]),             
-              .target(name: "Common"),             
+                      dependencies: ["Common", "wiringPi", "MPU9250", "Robot"]),             
+              .target(name: "Common"),
+              .target(name: "Robot")
               .systemLibrary(name: "wiringPi"), 
               .systemLibrary(name: "MPU9250")]
 )

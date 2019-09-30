@@ -68,5 +68,53 @@ public class Math
         return (value - fromRange.lowerBound) * toRangeLength / fromRangeLength + toRange.lowerBound
       }
     }
+  }// class NumericScaler
+  
+  ///////
+  struct PID
+  {
+    var setPoint: Double
+    var kP: Double
+    var kI: Double
+    var kD: Double
+    var integral: Double
+    var derivative: Double
+    var outputLimit: ClosedRange<Double>
+    
+    func init(setPoint:Double,
+              kP: Double,
+              kI: Double,
+              kD: Double,
+              outputLimit: ClosedRange<Double>,
+              integral: Double = 0.0,
+              derivative: Double = 0.0)
+    {
+      self.setPoint = setPoint
+      self.kP = kP
+      self.kI = kI
+      self.kD = kD
+      self.integral = integral
+      self.derivative = derivative
+      self.outputLimit = outputLimit
+    }
+    
+    static func step(input: Double): (delta: Double, pid:PID)
+    {
+      let error = this.setPoint - withInput
+      let p = self.kP * error
+      let d = self.kD * (error - this.derivative)
+      let nextIntegral = (this.integral + error).clamped(outputLimit)
+      let nextDerivative = error
+      let i = nextIntegral * self.kI
+      (p + i + d, PID(setPoint: self.setPoint,
+                      kP: self.kP,
+                      kI: self.kI,
+                      kD: self.kD,
+                      outputLimit: self.outputLimit,
+                      integral: nextIntegral,
+                      derivative: nextDerivative))
+    }
   }
+  
+  
 }
