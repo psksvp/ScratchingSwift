@@ -35,6 +35,8 @@
  * By using the provided information, libraries or software, you solely take the risks of damaging your hardwares.
  */
 
+#if os(Linux) && arch(arm)
+
 import Common
 
 public class RaspberryPi
@@ -70,3 +72,5 @@ public class RaspberryPi
     }
   }
 }
+
+#endif

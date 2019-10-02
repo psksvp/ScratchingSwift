@@ -13,7 +13,7 @@ let package = Package(
               .target(name: "PiHardwareInterface", 
                       dependencies: ["Common", "wiringPi", "MPU9250", "Robot"]),             
               .target(name: "Common"),
-              .target(name: "Robot")
+              .target(name: "Robot"),
               .systemLibrary(name: "wiringPi"), 
               .systemLibrary(name: "MPU9250")]
 )

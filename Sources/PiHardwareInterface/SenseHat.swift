@@ -43,6 +43,8 @@
 //  Copyright © 2019 com.psksvp. All rights reserved.
 //
 
+#if os(Linux) && arch(arm)
+
 import Foundation
 import MPU9250
 import Common
@@ -324,3 +326,5 @@ public class SenseHat
     }
   } // class Stick
 } // class SenseHAT
+
+#endif

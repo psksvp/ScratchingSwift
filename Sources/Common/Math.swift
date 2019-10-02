@@ -81,13 +81,13 @@ public class Math
     var derivative: Double
     var outputLimit: ClosedRange<Double>
     
-    func init(setPoint:Double,
-              kP: Double,
-              kI: Double,
-              kD: Double,
-              outputLimit: ClosedRange<Double>,
-              integral: Double = 0.0,
-              derivative: Double = 0.0)
+    init(setPoint:Double,
+         kP: Double,
+         kI: Double,
+         kD: Double,
+         outputLimit: ClosedRange<Double>,
+         integral: Double = 0.0,
+         derivative: Double = 0.0)
     {
       self.setPoint = setPoint
       self.kP = kP
@@ -98,21 +98,21 @@ public class Math
       self.outputLimit = outputLimit
     }
     
-    static func step(input: Double): (delta: Double, pid:PID)
+    func step(input: Double)-> (delta: Double, pid:PID)
     {
-      let error = this.setPoint - withInput
+      let error = self.setPoint - input
       let p = self.kP * error
-      let d = self.kD * (error - this.derivative)
-      let nextIntegral = (this.integral + error).clamped(outputLimit)
+      let d = self.kD * (error - self.derivative)
+      let nextIntegral = (self.integral + error).clamped(to: outputLimit)
       let nextDerivative = error
       let i = nextIntegral * self.kI
-      (p + i + d, PID(setPoint: self.setPoint,
-                      kP: self.kP,
-                      kI: self.kI,
-                      kD: self.kD,
-                      outputLimit: self.outputLimit,
-                      integral: nextIntegral,
-                      derivative: nextDerivative))
+      return (p + i + d, PID(setPoint: self.setPoint,
+                             kP: self.kP,
+                             kI: self.kI,
+                             kD: self.kD,
+                             outputLimit: self.outputLimit,
+                             integral: nextIntegral,
+                             derivative: nextDerivative))
     }
   }
   

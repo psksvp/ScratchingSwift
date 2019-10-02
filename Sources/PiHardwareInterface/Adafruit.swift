@@ -39,6 +39,8 @@ import Foundation
 import Common
 import Robot
 
+#if os(Linux) && arch(arm)
+
 public class Adafruit
 {
   ////////////////////////////////////////////////////
@@ -136,7 +138,7 @@ public class Adafruit
       private var in1Pin = 0
       private var in2Pin = 0
       private var currentPower = 10
-      private var currentCommand = Motor.Command.stop
+      private var currentCommand = MotorCommand.stop
       private var motorHat:MotorHat 
       
       init(channel: Int, motorHat: MotorHat)
@@ -154,7 +156,7 @@ public class Adafruit
         }
       }
       
-      public func run(command: Command) -> Void
+      public func run(command: MotorCommand) -> Void
       {
         Log.info("\(self) run command -> \(command)")
         switch command
@@ -170,7 +172,7 @@ public class Adafruit
         }
       }
       
-      public var command: Motor.Command
+      public var command: MotorCommand
       {
         get { return currentCommand }
         
@@ -335,3 +337,5 @@ public class Adafruit
     }
   }
 }
+
+#endif
