@@ -168,7 +168,9 @@ public class Adafruit
                           motorHat.pwmI2C.setPin(in2Pin, 1)
                           
           case .stop    : motorHat.pwmI2C.setPin(in2Pin, 0)
-                          motorHat.pwmI2C.setPin(in1Pin, 0)                                                   
+                          motorHat.pwmI2C.setPin(in1Pin, 0)
+                          
+          //default       : Log.warn("\(self) does not support command \(command)")
         }
       }
       
@@ -182,7 +184,11 @@ public class Adafruit
           {
             currentCommand = newCommand
             run(command: currentCommand)
-            Log.info("\(self) setCommnad to \(currentCommand)")
+            Log.info("\(self) set commnad to \(currentCommand)")
+          }
+          else
+          {
+            Log.info("\(self) newCommand == currentCommand")
           }
         }
       }
@@ -201,6 +207,10 @@ public class Adafruit
             currentPower = newPowerLevel.clamped(to: 0 ... 255)
             motorHat.pwmI2C.send(pwmPin, 0, currentPower * 16)
             Log.info("\(self) setPower to \(currentPower)")
+          }
+          else
+          {
+            Log.info("\(self) newPowerLevel == currentPowerLevel")
           }
         }
       }
