@@ -121,7 +121,7 @@ public class SerialPort
   
   private let fileID:Int32
   
-  public init(path: String, baud: Baud = .b9600,
+  public init(path: String, baud: Baud = .b4800,
                             bitSize: BitSize = .eight,
                             parity: Parity = .none)
   {
@@ -196,5 +196,38 @@ public class SerialPort
       let bytesWritten = SwiftGlibc.write(fileID, buffer, data.count)
       return bytesWritten
     }
+  }
+}
+
+extension SerialPort
+{
+  public func readLine(maxPerLine: Int = 255, maxTry: Int = 300) -> String?
+  {
+    var line = ""
+    var charCount = 0
+    var loopCounter = 0
+    while(loopCounter < maxTry)
+    {
+      loopCounter = loopCounter + 1
+      if let buffer = read(size: 1),
+         let read = String(bytes: buffer, encoding: .utf8)
+      {
+        line += read
+        charCount = charCount + 1
+        if let lastChar = line.last
+        {
+          if "\n" == lastChar || "\r" == lastChar || maxPerLine == charCount
+          {
+            return line.trim()
+          }
+        }
+      }
+      else
+      {
+        Log.error("\(self) readLine() fail to read") 
+        break
+      }
+    }
+    return nil
   }
 }

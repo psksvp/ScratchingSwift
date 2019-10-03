@@ -10,8 +10,6 @@ import Foundation
 import Common
 import PiHardwareInterface
 
-
-
 func testScaling() -> Void
 {
   let s = Math.NumericScaler(fromRange: 0...180, toRange: 145.0 ... 650.0)
@@ -20,6 +18,8 @@ func testScaling() -> Void
     print("\(g) -> \(s[Double(g)])")
   }
 }
+
+
 
 
 func testMotorHat() -> Void
@@ -128,10 +128,29 @@ func testServo() -> Void
 }
 
 
+func readGPS() -> Void
+{
+  let s = SerialPort(path: "/dev/ttyUSB0")
+  var c = 0
+  while(c < 200)
+  {
+    if let l = s.readLine()
+    {
+      print(l)
+    }
+    else
+    {
+      print("boom")
+    }
+    c = c + 1
+  }
+}
+
 print("Hello, World!")
+readGPS()
 //testScaling()
-testSenseHat()
-testMotorHat()
+//testSenseHat()
+//testMotorHat()
 //testServo()
 
 
