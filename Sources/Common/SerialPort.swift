@@ -144,7 +144,7 @@ public class SerialPort
       
       config.c_cflag &= ~tcflag_t(CSIZE)
       config.c_cflag |= bitSize.value
-      
+      //update the setting
       tcsetattr(fileID, TCSANOW, &config)
     }
   }
@@ -168,8 +168,11 @@ public class SerialPort
     {
       var rawBuffer = UnsafeMutablePointer<UInt8>.allocate(capacity: size)
       defer { rawBuffer.deallocate() }
-      
+#if os(Linux)      
       let bytesRead = SwiftGlibc.read(fileID, rawBuffer, size)
+#elseif os(macOS)
+      let bytesRead = Darwin.C.read(fileID, rawBuffer, size)
+#endif      
       if(bytesRead > 0)
       {
         return Array(UnsafeBufferPointer(start: rawBuffer, count: bytesRead))
@@ -193,7 +196,11 @@ public class SerialPort
       var d = data // the feak below wants a fucking var.
       buffer.initialize(from: &d, count: data.count)
       defer { buffer.deallocate() }
+#if os(Linux)
       let bytesWritten = SwiftGlibc.write(fileID, buffer, data.count)
+#elseif os(macOS)
+      let bytesWritten = Darwin.C.write(fileID, buffer, data.count)
+#endif
       return bytesWritten
     }
   }
@@ -201,11 +208,12 @@ public class SerialPort
 
 extension SerialPort
 {
-  public func readLine(maxPerLine: Int = 255, maxTry: Int = 300) -> String?
+  public func readLine(maxPerLine: Int = 255) -> String?
   {
     var line = ""
     var charCount = 0
     var loopCounter = 0
+    let maxTry = maxPerLine * 2
     while(loopCounter < maxTry)
     {
       loopCounter = loopCounter + 1
@@ -228,6 +236,11 @@ extension SerialPort
         break
       }
     }
+    if loopCounter >= maxTry
+    {
+      Log.error("\(self) readLine maxTry reached")
+    }
+    
     return nil
   }
 }

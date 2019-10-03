@@ -186,7 +186,8 @@ public class SenseHat
     private let fbDir = "/sys/class/graphics"
     private var fbPath = ""
    
-    private var buffer = Array.init(repeating: UInt8(0), count: 128) // (2 * 8 * 8) 8x8 each is 2 bytes
+   // (2 * 8 * 8) 8x8 each is 2 bytes
+    private var buffer = Array.init(repeating: UInt8(0), count: 128) 
     
     init()
     {
