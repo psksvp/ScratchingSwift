@@ -52,3 +52,10 @@ public extension String
     return self.trimmingCharacters(in: CharacterSet.controlCharacters)
   }
 }
+
+//func synchronized(_ syncedObj: Any, block: () -> ())
+//{
+//  objc_sync_enter(obj: syncedObj)
+//  block()
+//  objc_sync_exit(obj: syncedObj)
+//}

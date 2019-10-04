@@ -120,6 +120,7 @@ public class SerialPort
   }
   
   private let fileID:Int32
+  private var readBuffer = Buffer<UInt8>(capacity: 10)
   
   public init(path: String, baud: Baud = .b4800,
                             bitSize: BitSize = .eight,
@@ -154,6 +155,15 @@ public class SerialPort
     if -1 != fileID
     {
       close(fileID)
+    }
+  }
+  
+  private func fillReadBuffer() -> Void
+  {
+    if self.readBuffer.empty,
+       let r = read(size: self.readBuffer.capacity)
+    {
+      self.readBuffer.add(r)
     }
   }
   
@@ -210,6 +220,21 @@ extension SerialPort
 {
   public func readLine(maxPerLine: Int = 255) -> String?
   {
+    func readOne() -> UInt8?
+    {
+      fillReadBuffer()
+      if false == self.readBuffer.empty
+      {
+        return self.readBuffer.consume()
+      }
+      else
+      {
+        return nil
+      }
+    }
+    
+    self.readBuffer.capacity = maxPerLine
+    
     var line = ""
     var charCount = 0
     var loopCounter = 0
@@ -217,22 +242,22 @@ extension SerialPort
     while(loopCounter < maxTry)
     {
       loopCounter = loopCounter + 1
-      if let buffer = read(size: 1),
-         let read = String(bytes: buffer, encoding: .utf8)
+      if let c = readOne()
       {
-        line += read
-        charCount = charCount + 1
-        if let lastChar = line.last
+        let m = Character(Unicode.Scalar(c))
+        if "\n" == m || "\r" == m || maxPerLine == charCount
         {
-          if "\n" == lastChar || "\r" == lastChar || maxPerLine == charCount
-          {
-            return line.trim()
-          }
+          return line.trim()
+        }
+        else
+        {
+          line += String(m)
+          charCount = charCount + 1
         }
       }
       else
       {
-        Log.error("\(self) readLine() fail to read") 
+        Log.error("\(self) readLine() fail to read")
         break
       }
     }
@@ -243,4 +268,40 @@ extension SerialPort
     
     return nil
   }
+  
+//  public func readLine(maxPerLine: Int = 255) -> String?
+//  {
+//    var line = ""
+//    var charCount = 0
+//    var loopCounter = 0
+//    let maxTry = maxPerLine * 2
+//    while(loopCounter < maxTry)
+//    {
+//      loopCounter = loopCounter + 1
+//      if let buffer = read(size: 1),
+//         let read = String(bytes: buffer, encoding: .utf8)
+//      {
+//        line += read
+//        charCount = charCount + 1
+//        if let lastChar = line.last
+//        {
+//          if "\n" == lastChar || "\r" == lastChar || maxPerLine == charCount
+//          {
+//            return line.trim()
+//          }
+//        }
+//      }
+//      else
+//      {
+//        Log.error("\(self) readLine() fail to read")
+//        break
+//      }
+//    }
+//    if loopCounter >= maxTry
+//    {
+//      Log.error("\(self) readLine maxTry reached")
+//    }
+//
+//    return nil
+//  }
 }
