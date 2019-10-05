@@ -3,6 +3,7 @@
 
 import PackageDescription
 
+#if os(Linux) && arch(arm)
 let package = Package(
     name: "ScratchingSwift",
     dependencies: [],
@@ -17,3 +18,20 @@ let package = Package(
               .systemLibrary(name: "wiringPi"), 
               .systemLibrary(name: "MPU9250")]
 )
+#else
+
+let package = Package(
+    name: "ScratchingSwift",
+    dependencies: [],
+    targets: [.target(name: "ScratchingSwift",
+                      dependencies: ["Common"]),
+              .testTarget(name: "ScratchingSwiftTests",
+                          dependencies: ["ScratchingSwift"]),
+              .target(name: "Common"),
+              .target(name: "Robot"),
+              .target(name: "Graf",
+                      dependencies: ["CSFML"]),
+              .systemLibrary(name: "CSFML", providers: [.brew(["csfml"])])]
+)
+
+#endif

@@ -8,7 +8,11 @@
 
 import Foundation
 import Common
+#if os(Linux) && arch(arm)
 import PiHardwareInterface
+#else
+import AppKit
+#endif
 
 func testScaling() -> Void
 {
@@ -19,8 +23,7 @@ func testScaling() -> Void
   }
 }
 
-
-
+#if os(Linux) && arch(arm)
 
 func testMotorHat() -> Void
 {
@@ -146,8 +149,21 @@ func readGPS() -> Void
   }
 }
 
+#endif
+
+func reportMouse() -> Void
+{
+  while(true)
+  {
+    let l = NSEvent.mouseLocation
+    Log.info("mouse location \(l)")
+    Thread.sleep(forTimeInterval: 0.5)
+  }
+}
+
 print("Hello, World!")
-readGPS()
+//reportMouse()
+//readGPS()
 //testScaling()
 //testSenseHat()
 //testMotorHat()

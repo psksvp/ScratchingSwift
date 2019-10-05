@@ -167,7 +167,9 @@ public class SerialPort
     }
   }
   
+  /**
   
+   */
   public func read(size: Int) -> [UInt8]?
   {
     if(-1 == fileID)
@@ -181,7 +183,7 @@ public class SerialPort
 #if os(Linux)      
       let bytesRead = SwiftGlibc.read(fileID, rawBuffer, size)
 #elseif os(macOS)
-      let bytesRead = Darwin.C.read(fileID, rawBuffer, size)
+      let bytesRead = Darwin.read(fileID, rawBuffer, size)
 #endif      
       if(bytesRead > 0)
       {
@@ -194,6 +196,9 @@ public class SerialPort
     }
   }
   
+  /**
+  
+   */
   public func write(data: [UInt8]) -> Int
   {
     if(-1 == fileID)
@@ -209,15 +214,20 @@ public class SerialPort
 #if os(Linux)
       let bytesWritten = SwiftGlibc.write(fileID, buffer, data.count)
 #elseif os(macOS)
-      let bytesWritten = Darwin.C.write(fileID, buffer, data.count)
+      let bytesWritten = Darwin.write(fileID, buffer, data.count)
 #endif
       return bytesWritten
     }
   }
 }
 
+
+//////////////////////////////////////////////////////////////////
 extension SerialPort
 {
+  /**
+
+   */
   public func readLine(maxPerLine: Int = 255) -> String?
   {
     func readOne() -> UInt8?
@@ -268,40 +278,4 @@ extension SerialPort
     
     return nil
   }
-  
-//  public func readLine(maxPerLine: Int = 255) -> String?
-//  {
-//    var line = ""
-//    var charCount = 0
-//    var loopCounter = 0
-//    let maxTry = maxPerLine * 2
-//    while(loopCounter < maxTry)
-//    {
-//      loopCounter = loopCounter + 1
-//      if let buffer = read(size: 1),
-//         let read = String(bytes: buffer, encoding: .utf8)
-//      {
-//        line += read
-//        charCount = charCount + 1
-//        if let lastChar = line.last
-//        {
-//          if "\n" == lastChar || "\r" == lastChar || maxPerLine == charCount
-//          {
-//            return line.trim()
-//          }
-//        }
-//      }
-//      else
-//      {
-//        Log.error("\(self) readLine() fail to read")
-//        break
-//      }
-//    }
-//    if loopCounter >= maxTry
-//    {
-//      Log.error("\(self) readLine maxTry reached")
-//    }
-//
-//    return nil
-//  }
 }

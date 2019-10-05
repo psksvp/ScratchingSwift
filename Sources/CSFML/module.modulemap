@@ -1,0 +1,13 @@
+module CSFML 
+{
+  header "/usr/local/include/SFML/Audio.h"
+  header "/usr/local/include/SFML/Graphics.h"
+  header "/usr/local/include/SFML/Network.h"
+  header "/usr/local/include/SFML/Window.h"
+  
+  link "csfml-audio"
+  link "csfml-graphics"
+  link "csfml-network"
+  link "csfml-window"
+  export *
+}

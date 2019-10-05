@@ -47,6 +47,7 @@ import Foundation
 
 public class OS
 {
+  @available(OSX 10.13, *)
   public class func spawn(_ args:[String]) -> [String]?
   {
     if args.isEmpty
