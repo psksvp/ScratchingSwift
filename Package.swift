@@ -3,18 +3,28 @@
 
 import PackageDescription
 
+
+
 #if os(Linux) && arch(arm)
 let package = Package(
     name: "ScratchingSwift",
-    dependencies: [],
+    dependencies: [.package(url: "https://github.com/pvieito/PythonKit.git",
+                   .branch("master"))],
     targets: [.target(name: "ScratchingSwift",
-                      dependencies: ["PiHardwareInterface", "Common"]),
+                      dependencies: ["PiHardwareInterface",
+                                     "Common",
+                                     "PythonKit",
+                                     "LinuxInput"]),
               .testTarget(name: "ScratchingSwiftTests",
                           dependencies: ["ScratchingSwift"]),
               .target(name: "PiHardwareInterface", 
-                      dependencies: ["Common", "wiringPi", "MPU9250", "Robot"]),             
+                      dependencies: ["Common",
+                                     "wiringPi",
+                                     "MPU9250",
+                                     "Robot"]),
               .target(name: "Common"),
               .target(name: "Robot"),
+              .target(name: "LinuxInput"),
               .systemLibrary(name: "wiringPi"), 
               .systemLibrary(name: "MPU9250")]
 )
@@ -22,9 +32,10 @@ let package = Package(
 
 let package = Package(
     name: "ScratchingSwift",
-    dependencies: [],
+    dependencies: [.package(url: "https://github.com/pvieito/PythonKit.git",
+                   .branch("master"))],
     targets: [.target(name: "ScratchingSwift",
-                      dependencies: ["Common"]),
+                      dependencies: ["Common", "PythonKit"]),
               .testTarget(name: "ScratchingSwiftTests",
                           dependencies: ["ScratchingSwift"]),
               .target(name: "Common"),

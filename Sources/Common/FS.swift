@@ -129,7 +129,7 @@ public class FS
         Log.error("FS.readBytes fail to open file -> \(path)")
         return nil
       }
-      else
+      else 
       {
         return buffer
       }    
@@ -140,5 +140,5 @@ public class FS
       return nil
     }
   }
-
+  
 }

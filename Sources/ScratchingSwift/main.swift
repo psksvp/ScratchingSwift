@@ -8,8 +8,10 @@
 
 import Foundation
 import Common
+import PythonKit
 #if os(Linux) && arch(arm)
 import PiHardwareInterface
+import LinuxInput
 #else
 import AppKit
 #endif
@@ -151,17 +153,30 @@ func readGPS() -> Void
 
 #endif
 
-func reportMouse() -> Void
-{
-  while(true)
-  {
-    let l = NSEvent.mouseLocation
-    Log.info("mouse location \(l)")
-    Thread.sleep(forTimeInterval: 0.5)
-  }
-}
 
 print("Hello, World!")
+
+print(Python.version)
+//let sys = try Python.import("sys")
+
+//print("Python \(sys.version_info.major).\(sys.version_info.minor)")
+//print("Python Version: \(sys.version)")
+//print("Python Encoding: \(sys.getdefaultencoding().upper())")
+
+let js = joystickOpen("/dev/input/js0")
+print("axis count : \(joystickAxisCount(js))")
+print("button count : \(joystickButtonCount(js))")
+while(true)
+{
+  let d = joystickRead(js, 5000)
+  print(d)
+  if d.valid == 0
+  {
+    break;
+  }
+}
+joystickClose(js)
+
 //reportMouse()
 //readGPS()
 //testScaling()
