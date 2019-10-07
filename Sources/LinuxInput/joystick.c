@@ -1,3 +1,39 @@
+/*
+*  The BSD 3-Clause License
+*  Copyright (c) 2018. by Pongsak Suvanpong (psksvp@gmail.com)
+*  All rights reserved.
+*
+*  Redistribution and use in source and binary forms, with or without modification,
+*  are permitted provided that the following conditions are met:
+*
+*  1. Redistributions of source code must retain the above copyright notice,
+*  this list of conditions and the following disclaimer.
+*
+*  2. Redistributions in binary form must reproduce the above copyright notice,
+*  this list of conditions and the following disclaimer in the documentation
+*  and/or other materials provided with the distribution.
+*
+*  3. Neither the name of the copyright holder nor the names of its contributors may
+*  be used to endorse or promote products derived from this software without
+*  specific prior written permission.
+*
+*  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+*  ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+*  WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+*  IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+*  INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+*  (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+*  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+*  THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+*  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+*  EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*
+* This information is provided for personal educational purposes only.
+*
+* The author does not guarantee the accuracy of this information.
+*
+* By using the provided information, libraries or software, you solely take the risks of damaging your hardwares.
+*/
 
 #include "include/LinuxInput.h"
 #include <fcntl.h>
@@ -34,18 +70,18 @@ unsigned int joystickAxisCount(int fd)
   __u8 axes;
 
   if (ioctl(fd, JSIOCGAXES, &axes) == -1)
-      return 0;
+    return 0;
 
   return (unsigned int)axes;
 }
 
 unsigned int joystickButtonCount(int fd)
 {
-   __u8 buttons;
-   if (ioctl(fd, JSIOCGBUTTONS, &buttons) == -1)
-       return 0;
+  __u8 buttons;
+  if (ioctl(fd, JSIOCGBUTTONS, &buttons) == -1)
+    return 0;
 
-   return (unsigned int)buttons;
+  return (unsigned int)buttons;
 }
 
 struct JoystickData joystickRead(int fd, unsigned int msTimeout)
@@ -73,167 +109,4 @@ struct JoystickData joystickRead(int fd, unsigned int msTimeout)
    
    return jsd;
 }
-
-
-///**
-// * Reads a joystick event from the joystick device.
-// *
-// * Returns 0 on success. Otherwise -1 is returned.
-// */
-//int read_event(int fd, struct js_event *event)
-//{
-//    ssize_t bytes;
-//
-//    bytes = read(fd, event, sizeof(*event));
-//
-//    if (bytes == sizeof(*event))
-//        return 0;
-//
-//    /* Error, could not read full event. */
-//    return -1;
-//}
-//
-///**
-// * Current state of an axis.
-// */
-//struct axis_state {
-//    short x, y;
-//};
-//
-///**
-// * Keeps track of the current axis state.
-// *
-// * NOTE: This function assumes that axes are numbered starting from 0, and that
-// * the X axis is an even number, and the Y axis is an odd number. However, this
-// * is usually a safe assumption.
-// *
-// * Returns the axis that the event indicated.
-// */
-//size_t get_axis_state(struct js_event *event, struct axis_state axes[10])
-//{
-//    size_t axis = event->number / 2;
-//
-//    if (axis < 10)
-//    {
-//        if (event->number % 2 == 0)
-//            axes[axis].x = event->value;
-//        else
-//            axes[axis].y = event->value;
-//    }
-//
-//    return axis;
-//}
-//
-//int test(int argc, char *argv[])
-//{
-//    const char *device;
-//    int js;
-//    struct js_event event;
-//    struct axis_state axes[10] = {0};
-//    size_t axis;
-//
-//    if (argc > 1)
-//        device = argv[1];
-//    else
-//        device = "/dev/input/js0";
-//
-//    js = open(device, O_RDONLY);
-//
-//    if (js == -1)
-//        perror("Could not open joystick");
-//    else
-//    {
-//      printf("axis count -> %d\n", get_axis_count(js));
-//      printf("buttons count -> %d\n", get_button_count(js));
-//    }
-//
-//    /* This loop will exit if the controller is unplugged. */
-//    while (read_event(js, &event) == 0)
-//    {
-//        switch (event.type)
-//        {
-//            case JS_EVENT_BUTTON:
-//                printf("Button %u %s\n", event.number, event.value ? "pressed" : "released");
-//                break;
-//            case JS_EVENT_AXIS:
-//                //axis = get_axis_state(&event, axes);
-//                //if (axis < 3)
-//                //printf("Axis %zu at (%6d, %6d)\n", axis, axes[axis].x, axes[axis].y);
-//                 printf("Axis %u %d\n", event.number, event.value);
-//                break;
-//            case JS_EVENT_INIT:
-//                printf("init..\n");
-//            default:
-//                /* Ignore init events. */
-//                break;
-//        }
-//    }
-//
-//    close(js);
-//    return 0;
-//}
-
-
-// #include <linux/input.h>
-// #include <stdio.h>
-// #include <fcntl.h>
-// #include <unistd.h>
-// #include <poll.h>
-//
-// int main(int argc, char *argv[])
-// {
-//     int timeout_ms = 5000;
-//     char* input_dev = argv[1];
-//     int st;
-//     int ret;
-//     struct pollfd fds[1];
-//
-//     fds[0].fd = open(input_dev, O_RDONLY|O_NONBLOCK);
-//
-//     if(fds[0].fd<0)
-//     {
-//         printf("error unable open for reading '%s'\n",input_dev);
-//         return(0);
-//     }
-//
-//     struct input_event e;
-//
-//     fds[0].events = POLLIN;
-//
-//     int exit_on_key_press_count = 10;
-//
-//     while(1)
-//     {
-//         ret = poll(fds, 1, timeout_ms);
-//
-//         if(ret>0)
-//         {
-//             if(fds[0].revents)
-//             {
-//                 ssize_t r = read(fds[0].fd, &e, sizeof(e));
-//
-//                 if(r<0)
-//                 {
-//                     printf("error %d\n",(int)r);
-//                     break;
-//                 }
-//                 else
-//                 {
-//                   printf("%hu %hu %u\n", e.type, e.code, e.value);
-//                 }
-//             }
-//             else
-//             {
-//                 printf("error\n");
-//             }
-//         }
-//         else
-//         {
-//             printf("timeout\n");
-//         }
-//     }
-//
-//     close(fds[0].fd);
-//     return 0;
-//   }
 
