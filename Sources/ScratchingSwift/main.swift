@@ -151,6 +151,39 @@ func readGPS() -> Void
   }
 }
 
+func cJoystick() -> Void
+{
+  let js = joystickOpen("/dev/input/js0")
+  print("axis count : \(joystickAxisCount(js))")
+  print("button count : \(joystickButtonCount(js))")
+  while(true)
+  {
+    let d = joystickRead(js, 5000)
+    print(d)
+    if d.valid == 0
+    {
+      break;
+    }
+  }
+  joystickClose(js)
+}
+
+func swiftJoystick() -> Void
+{
+  let js = Joystick(devicePath: "/dev/input/js0")
+  while(true)
+  {
+    if let e = js.poll()
+    {
+      print(e)
+    }
+    else
+    {
+      print("timeout")
+    }
+  }
+}
+
 #endif
 
 
@@ -163,20 +196,8 @@ print(Python.version)
 //print("Python Version: \(sys.version)")
 //print("Python Encoding: \(sys.getdefaultencoding().upper())")
 
-let js = joystickOpen("/dev/input/js0")
-print("axis count : \(joystickAxisCount(js))")
-print("button count : \(joystickButtonCount(js))")
-while(true)
-{
-  let d = joystickRead(js, 5000)
-  print(d)
-  if d.valid == 0
-  {
-    break;
-  }
-}
-joystickClose(js)
 
+swiftJoystick()
 //reportMouse()
 //readGPS()
 //testScaling()

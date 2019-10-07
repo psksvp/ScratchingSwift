@@ -19,6 +19,16 @@ void joystickClose(int fd)
     close(fd);
 }
 
+int joystickControlButtonConst()
+{
+  return JS_EVENT_BUTTON;
+}
+
+int joystickConteolAxisConst()
+{
+  return JS_EVENT_AXIS;
+}
+
 unsigned int joystickAxisCount(int fd)
 {
   __u8 axes;

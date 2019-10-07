@@ -12,6 +12,8 @@ struct JoystickData
 
 int joystickOpen(const char* path);
 void joystickClose(int fd);
+int joystickControlButtonConst();
+int joystickConteolAxisConst();
 unsigned int joystickAxisCount(int fd);
 unsigned int joystickButtonCount(int fd);
 struct JoystickData joystickRead(int fd, unsigned int msTimeout);
