@@ -35,12 +35,4 @@
 * By using the provided information, libraries or software, you solely take the risks of damaging your hardwares.
 */
 
-protocol Observer<TDATA>
-{
-  func available(sender: Observable<TDATA>, data: TDATA) -> Void
-}
 
-
-protocol Observable<TDATA>
-{
-}

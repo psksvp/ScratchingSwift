@@ -325,6 +325,34 @@ public class SenseHat
       }
       
     }
+    
+    public func read(msTimeout timeout: Int32) -> Direction?
+    {
+      let codeMap:[UInt16 : Direction] = [103 : .up,
+                                          108 : .down,
+                                          105 : .left,
+                                          106 : .right,
+                                          28  : .push]
+      /*
+       each input is 16 bytes.
+       long,long,short,    short,  int
+       time,time,inputType,keyCode,value
+      */
+      let evKey = UInt16(0x01)
+      if let df = FS.deviceFile(atPath: stickDevPath),
+         let buffer = df.read(size: 16, msTimeout: timeout)
+      {
+        let keyCode = Bits.twoUInt8ToUInt16(high: buffer[10], low: buffer[11])
+        let inputType = Bits.twoUInt8ToUInt16(high: buffer[8], low: buffer[9])
+        return evKey == inputType ? codeMap[keyCode] : nil
+      }
+      else
+      {
+        return nil
+      }
+       
+    }
+    
   } // class Stick
 } // class SenseHAT
 

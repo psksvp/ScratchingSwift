@@ -16,6 +16,7 @@ import LinuxInput
 import AppKit
 #endif
 
+
 func testScaling() -> Void
 {
   let s = Math.NumericScaler(fromRange: 0...180, toRange: 145.0 ... 650.0)
@@ -117,7 +118,7 @@ func testServo() -> Void
   var keepGoing = true
   while(keepGoing)
   {
-    if let key = SenseHat.stick.read()
+    if let key = SenseHat.stick.read(msTimeout: 5000)
     {
       switch key
       {
@@ -128,6 +129,10 @@ func testServo() -> Void
         case .push  : servo.angle = 90
                       keepGoing = false                          
       }
+    }
+    else
+    {
+      print("timeout..")
     }
   }
 }
@@ -170,18 +175,30 @@ func cJoystick() -> Void
 
 func swiftJoystick() -> Void
 {
+  let scl = Math.NumericScaler<Double>(fromRange: -32676...32676, toRange: 0...180)
   let js = Joystick(devicePath: "/dev/input/js0")
-  while(true)
+  let sh = Adafruit.ServoHat()
+  let servo = sh.servo(channel: .ch15)
+  var keepGoing = true
+  while(keepGoing)
   {
     if let e = js.poll()
     {
       print(e)
-    }
-    else
-    {
-      print("timeout")
+      switch e
+      {
+        case .Button(let id, _)   : keepGoing =  2 != id
+                                  
+        case .Axis(let id, let v) : if 0 == id
+                                     {
+                                       servo.angle = Int(scl[Double(v)])
+                                     }
+                                     
+        default                   : print("m")
+      }
     }
   }
+  
 }
 
 #endif
@@ -189,7 +206,7 @@ func swiftJoystick() -> Void
 
 print("Hello, World!")
 
-print(Python.version)
+//print(Python.version)
 //let sys = try Python.import("sys")
 
 //print("Python \(sys.version_info.major).\(sys.version_info.minor)")
@@ -197,11 +214,11 @@ print(Python.version)
 //print("Python Encoding: \(sys.getdefaultencoding().upper())")
 
 
+testSenseHat()
 swiftJoystick()
 //reportMouse()
 //readGPS()
 //testScaling()
-//testSenseHat()
 //testMotorHat()
 //testServo()
 

@@ -35,8 +35,11 @@
 * By using the provided information, libraries or software, you solely take the risks of damaging your hardwares.
 */
 
+#if os(Linux)
+
 import Foundation
 import LinuxInput
+import FS
 
 public class Joystick
 {
@@ -97,4 +100,11 @@ public class Joystick
     }
   }
 }
+
+class JoystickDevice
+{
+  
+}
+
+#endif
 

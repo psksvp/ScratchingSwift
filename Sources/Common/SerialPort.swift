@@ -172,11 +172,7 @@ public class SerialPort
    */
   public func read(size: Int) -> [UInt8]?
   {
-    if(-1 == fileID)
-    {
-      return nil
-    }
-    else
+    if(-1 != fileID)
     {
       var rawBuffer = UnsafeMutablePointer<UInt8>.allocate(capacity: size)
       defer { rawBuffer.deallocate() }
@@ -189,11 +185,9 @@ public class SerialPort
       {
         return Array(UnsafeBufferPointer(start: rawBuffer, count: bytesRead))
       }
-      else
-      {
-        return nil
-      }
     }
+    
+    return nil
   }
   
   /**
