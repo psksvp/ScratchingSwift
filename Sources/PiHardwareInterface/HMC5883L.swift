@@ -63,7 +63,7 @@ class HMC5883L
     i2c.writeByte(register: ModeRegister, data: MeasurementContinuous)
   }
   
-  func read() -> (Float, Float, Float)
+  func read() -> (x: Float, y: Float, z: Float)
   {
     let msbx = i2c.readByte(register: AxisXDataRegisterMSB)
     let lsbx = i2c.readByte(register: AxisXDataRegisterLSB)
@@ -78,25 +78,28 @@ class HMC5883L
     return (Float(magx) * scale, Float(magy) * scale, Float(magz) * scale)
   }
   
-  func heading() -> (Float, Float)
+  var  heading: (degree: Float, minute: Float)
   {
-    let (x, y, _) = read()
-    var headingRad = atan2(y, x)
-    headingRad += declination
-    if(headingRad < 0)
+    get
     {
-      headingRad += (2 * Float.pi)
-    }
+      let (x, y, _) = read()
+      var headingRad = atan2(y, x)
+      headingRad += declination
+      if(headingRad < 0)
+      {
+        headingRad += (2 * Float.pi)
+      }
 
-    if(headingRad >= 2 * Float.pi)
-    {
-      headingRad -= (2 * Float.pi)
-    }
+      if(headingRad >= 2 * Float.pi)
+      {
+        headingRad -= (2 * Float.pi)
+      }
 
-    let headingDeg = headingRad * 180.0 / Float.pi
-    let degrees = floor(headingDeg)
-    let minutes = round((headingDeg - degrees) * 60.0)
-    return (Float(degrees), Float(minutes))
+      let headingDeg = headingRad * 180.0 / Float.pi
+      let degrees = floor(headingDeg)
+      let minutes = round((headingDeg - degrees) * 60.0)
+      return (Float(degrees), Float(minutes))
+    }
   } 
 }
 

@@ -39,7 +39,6 @@
 
 import Foundation
 import LinuxInput
-import FS
 
 public class Joystick
 {
@@ -51,8 +50,8 @@ public class Joystick
   
   public enum Event
   {
-    case Button(id: Int32, state: State)
-    case Axis(id: Int32, value: Int32)
+    case Button(id: Int, state: State)
+    case Axis(id: Int, value: Int)
   }
   
   public var numberOfButton: UInt32
@@ -87,9 +86,10 @@ public class Joystick
     {
       switch e.type
       {
-        case evtButton : return .Button(id: e.controlID,
+        case evtButton : return .Button(id: Int(e.controlID),
                                      state: 1 == e.value ? .pressed : .released)
-        case evtAxis   : return .Axis(id: e.controlID, value: e.value)
+                                     
+        case evtAxis   : return .Axis(id: Int(e.controlID), value: Int(e.value))
         
         default        : return nil
       }
@@ -101,10 +101,32 @@ public class Joystick
   }
 }
 
-class JoystickDevice
-{
-  
-}
+///////////////////////////////////////////////////////////////////
+// class JoystickReader
+// {
+//   private let js: Joystick
+//   private var keepRunning = true
+//   private var axises = [Int]
+//   private let looper = Thread
+//                        {
+//                          while keepRunning
+//                          {
+//
+//                          }
+//                        }
+//
+//
+//
+//   public init(joystick: Joystick)
+//   {
+//     self.js = joystick
+//   }
+//
+//
+// }
+
+
+
 
 #endif
 

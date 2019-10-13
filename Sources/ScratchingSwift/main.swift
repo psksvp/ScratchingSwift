@@ -187,18 +187,82 @@ func swiftJoystick() -> Void
       print(e)
       switch e
       {
-        case .Button(let id, _)   : keepGoing =  2 != id
+        case .Button(let id, _) : keepGoing =  2 != id
                                   
-        case .Axis(let id, let v) : if 0 == id
-                                     {
-                                       servo.angle = Int(scl[Double(v)])
-                                     }
+        case .Axis(0, let v)    : servo.angle = Int(scl[Double(v)])
                                      
-        default                   : print("m")
+        case .Axis(1, let v)    : print(v)                                
+                                     
+        default                 : print("m")
       }
     }
   }
   
+}
+
+func testMacanum() -> Void
+{
+  let maxL = 100.0
+  let sR = Math.NumericScaler<Double>(fromRange: -32676...32676, toRange: 0...(2 * Double.pi))
+  let sV = Math.NumericScaler<Double>(fromRange: -32676...32676, toRange: -100...100)
+  let js = Joystick(devicePath: "/dev/input/js0") 
+  var keepGoing = true
+  var x = 0.0
+  var y = 0.0
+  var r = 0.0
+  
+  func read() -> Void
+  {
+    if let e = js.poll()
+    {
+      //print(e)
+      switch e
+      {
+        case .Button(2, _)   : keepGoing = false
+        case .Axis(0, let v) : x = -sV[Double(v)]
+        case .Axis(1, let v) : y = -sV[Double(v)]
+        case .Axis(3, let v) : r = -sV[Double(v)]
+        default              : break
+      }
+    }
+  }
+  
+  
+  
+  while(keepGoing)
+  {
+    read()
+    var m1 = y - x + r
+    var m2 = y + x - r
+    var m3 = y - x - r
+    var m4 = y + x + r
+    
+    var max = m1
+    if max < m2
+    {
+      max = m2
+    }
+    
+    if max < m3
+    {
+      max = m3
+    }
+    
+    if max < m4
+    {
+      max = m4
+    }
+    
+    if max > maxL
+    {
+      m1 = m1 / (max * maxL)
+      m2 = m2 / (max * maxL)
+      m3 = m3 / (max * maxL)
+      m4 = m4 / (max * maxL)
+    }
+    
+    print("\(x),\(y),\(r) -> \(m1), \(m2), \(m3), \(m4)")
+  }
 }
 
 #endif
@@ -206,16 +270,16 @@ func swiftJoystick() -> Void
 
 print("Hello, World!")
 
-//print(Python.version)
-//let sys = try Python.import("sys")
+print(Python.version)
+let sys = try Python.import("sys")
 
-//print("Python \(sys.version_info.major).\(sys.version_info.minor)")
-//print("Python Version: \(sys.version)")
-//print("Python Encoding: \(sys.getdefaultencoding().upper())")
+print("Python \(sys.version_info.major).\(sys.version_info.minor)")
+print("Python Version: \(sys.version)")
+print("Python Encoding: \(sys.getdefaultencoding().upper())")
 
-
-testSenseHat()
-swiftJoystick()
+//testMacanum()
+//testSenseHat()
+//swiftJoystick()
 //reportMouse()
 //readGPS()
 //testScaling()
