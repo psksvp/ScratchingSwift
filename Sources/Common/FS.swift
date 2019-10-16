@@ -160,19 +160,22 @@ public class FS
       get {return self.fd}
     }
 
+    //////////////////////////////////////////////
     public init(path: String, flags: Int32 = O_RDONLY)
     {
       self.fd = open(path, flags|O_NONBLOCK)
     }
 
+    //////////////////////////////////////////////
     deinit
     {
-      if -1 != fd
+      if -1 != fileDesciptor
       {
-        close(self.fd)
+        close(fileDesciptor)
       }
     }
 
+    //////////////////////////////////////////////
     public func read(size: Int, msTimeout: Int32) -> [UInt8]?
     {
       let fds = UnsafeMutablePointer<pollfd>.allocate(capacity: 1)
@@ -185,9 +188,9 @@ public class FS
          var rawBuffer = UnsafeMutablePointer<UInt8>.allocate(capacity: size)
          defer { rawBuffer.deallocate() }
 #if os(Linux)
-         let bytesRead = SwiftGlibc.read(self.fd, rawBuffer, size)
+         let bytesRead = SwiftGlibc.read(fileDesciptor, rawBuffer, size)
 #elseif os(macOS)
-         let bytesRead = Darwin.read(self.fd, rawBuffer, size)
+         let bytesRead = Darwin.read(fileDesciptor, rawBuffer, size)
 #endif
          if(bytesRead > 0)
          {
@@ -197,7 +200,9 @@ public class FS
       
       return nil
     }
-    
+		
+		
+    //////////////////////////////////////////////
     public func ioctlRead(request: UInt) -> UInt8?
     {
       var a = UInt8(0)

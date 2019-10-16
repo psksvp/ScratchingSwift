@@ -34,13 +34,15 @@
 *
 * By using the provided information, libraries or software, you solely take the risks of damaging your hardwares.
 */
+
+import Foundation
  
 public class MecanumWheelsDriver
 {
-  private let frontLeft: Motor
-  private let frontRight: Motor
-  private let rearLeft: Motor
-  private let rearRight: Motor
+  private var frontLeft: Motor
+  private var frontRight: Motor
+  private var rearLeft: Motor
+  private var rearRight: Motor
   
   
   public init(frontLeft: Motor,
@@ -52,6 +54,38 @@ public class MecanumWheelsDriver
     self.frontRight = frontRight
     self.rearLeft   = rearLeft
     self.rearRight  = rearRight
+  }
+    
+  public func move(vx: Double, vy: Double, vr: Double) -> Void
+  {
+    let m1 = vy - vx + vr
+    let m2 = vy + vx - vr
+    let m3 = vy - vx - vr
+    let m4 = vy + vx + vr
+    let limit = Double(self.frontLeft.limit)
+		print("limit = \(limit) \(m1) \(m2) \(m3) \(m4)")
+		
+  	frontLeft.speed = Int(m1)
+  	frontRight.speed = Int(m2)
+  	rearLeft.speed = Int(m3)
+  	rearRight.speed = Int(m4)
+      
+			//     if let max = [m1, m2, m3, m4].max()
+			//     {
+			// if max != 0.0
+			// {
+			//       	let s1 = Int(m1 / (max * limit))
+			//       	let s2 = Int(m2 / (max * limit))
+			//       	let s3 = Int(m3 / (max * limit))
+			//       	let s4 = Int(m4 / (max * limit))
+			// 	print(s1, s2, s3, s4)
+			//
+			//       	frontLeft.speed = s1
+			//       	frontRight.speed = s2
+			//       	rearLeft.speed = s3
+			//       	rearRight.speed = s4
+			// }
+			//     }
   }
   
   

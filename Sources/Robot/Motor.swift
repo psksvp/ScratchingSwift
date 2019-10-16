@@ -45,17 +45,11 @@
 import Foundation
 
 
-public enum MotorCommand
-{
-  case forward
-  case reverse
-  case stop
-}
 
 public protocol Motor
 {
-  var power: Int { get set }
-  var command: MotorCommand { get set }
+  var speed: Int { get set }
+	var limit: Int { get }
 }
 
 

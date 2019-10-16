@@ -12,6 +12,7 @@ import PythonKit
 #if os(Linux) && arch(arm)
 import PiHardwareInterface
 import LinuxInput
+import Robot
 #else
 import AppKit
 #endif
@@ -30,15 +31,12 @@ func testScaling() -> Void
 
 func testMotorHat() -> Void
 {
+	var speed = 0
   let motorHat = Adafruit.MotorHat()
   let m1 = motorHat.motor(atPort: .m1)
   let m2 = motorHat.motor(atPort: .m2)
   let m3 = motorHat.motor(atPort: .m3)
   let m4 = motorHat.motor(atPort: .m4)
-  m1.power = 30
-  m2.power = 30
-  m3.power = 30
-  m4.power = 30
   var keepGoing = true
   while(keepGoing)
   {
@@ -46,33 +44,18 @@ func testMotorHat() -> Void
     {
       switch key
       {
-        case .up    : 
-          m1.run(command: .forward)
-          m2.run(command: .forward)
-          m3.run(command: .forward)
-          m4.run(command: .forward)
-        case .down  : 
-          m1.run(command: .reverse)
-          m2.run(command: .reverse)
-          m3.run(command: .reverse)
-          m4.run(command: .reverse)
-        case .right :
-          m1.power = m1.power + 5
-          m2.power = m2.power + 5
-          m3.power = m3.power + 5
-          m4.power = m4.power + 5
-        case .left  : 
-          m1.power = m1.power - 5 
-          m2.power = m2.power - 5 
-          m3.power = m3.power - 5 
-          m4.power = m4.power - 5 
-        case .push  : 
-          m1.run(command: .stop)
-          m2.run(command: .stop)
-          m3.run(command: .stop)
-          m4.run(command: .stop)
-          keepGoing = false                          
+        case .up, .right   : speed = speed + 5
+      
+				case .down, .left  : speed = speed - 5
+        
+				case .push         : speed = 0;
+				                     keepGoing = false                          
       }
+			
+			m1.speed = speed
+			m2.speed = speed
+			m3.speed = speed
+			m4.speed = speed
     }
   }
 }
@@ -210,6 +193,13 @@ func testMacanum() -> Void
   var x = 0.0
   var y = 0.0
   var r = 0.0
+	
+  let motorHat = Adafruit.MotorHat()
+  let m1 = motorHat.motor(atPort: .m1)
+  let m2 = motorHat.motor(atPort: .m2)
+  let m3 = motorHat.motor(atPort: .m3)
+  let m4 = motorHat.motor(atPort: .m4)
+	let mcw = MecanumWheelsDriver(frontLeft: m1, frontRight: m2, rearLeft: m3, rearRight: m4)
   
   func read() -> Void
   {
@@ -226,42 +216,11 @@ func testMacanum() -> Void
       }
     }
   }
-  
-  
-  
+
   while(keepGoing)
   {
     read()
-    var m1 = y - x + r
-    var m2 = y + x - r
-    var m3 = y - x - r
-    var m4 = y + x + r
-    
-    var max = m1
-    if max < m2
-    {
-      max = m2
-    }
-    
-    if max < m3
-    {
-      max = m3
-    }
-    
-    if max < m4
-    {
-      max = m4
-    }
-    
-    if max > maxL
-    {
-      m1 = m1 / (max * maxL)
-      m2 = m2 / (max * maxL)
-      m3 = m3 / (max * maxL)
-      m4 = m4 / (max * maxL)
-    }
-    
-    print("\(x),\(y),\(r) -> \(m1), \(m2), \(m3), \(m4)")
+    mcw.move(vx: x, vy: y, vr: r)
   }
 }
 
@@ -277,7 +236,9 @@ print("Python \(sys.version_info.major).\(sys.version_info.minor)")
 print("Python Version: \(sys.version)")
 print("Python Encoding: \(sys.getdefaultencoding().upper())")
 
-//testMacanum()
+ANSI.test()
+ 
+testMacanum()
 //testSenseHat()
 //swiftJoystick()
 //reportMouse()

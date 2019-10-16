@@ -130,6 +130,13 @@ public class Adafruit
   {
     public class DCMotor : Motor
     {
+			public enum Command
+			{
+				case forward(speed: Int)
+				case reverse(speed: Int)
+				case stop
+			}
+			
       private let channelConfig = [0 : (8, 9, 10),
                                    1 : (13, 12, 11),
                                    2 : (2, 3, 4),
@@ -137,9 +144,8 @@ public class Adafruit
       private var pwmPin = 0
       private var in1Pin = 0
       private var in2Pin = 0
-      private var currentPower = 10
-      private var currentCommand = MotorCommand.stop
-      private var motorHat:MotorHat 
+      private var currentSpeed = 0
+      private var motorHat: MotorHat 
       
       init(channel: Int, motorHat: MotorHat)
       {
@@ -156,61 +162,66 @@ public class Adafruit
         }
       }
       
-      public func run(command: MotorCommand) -> Void
+      public func run(command: Command) -> Void
       {
         Log.info("\(self) run command -> \(command)")
         switch command
         {
-          case .forward : motorHat.pwmI2C.setPin(in2Pin, 0)
-                          motorHat.pwmI2C.setPin(in1Pin, 1)
+          case .forward(let speed) : motorHat.pwmI2C.setPin(in2Pin, 0)
+                          					 motorHat.pwmI2C.setPin(in1Pin, 1)
+													           motorHat.pwmI2C.send(pwmPin, 0, speed * 16)
                           
-          case .reverse : motorHat.pwmI2C.setPin(in1Pin, 0)
-                          motorHat.pwmI2C.setPin(in2Pin, 1)
+          case .reverse(let speed) : motorHat.pwmI2C.setPin(in1Pin, 0)
+                                     motorHat.pwmI2C.setPin(in2Pin, 1)
+												             motorHat.pwmI2C.send(pwmPin, 0, speed * 16)
                           
-          case .stop    : motorHat.pwmI2C.setPin(in2Pin, 0)
-                          motorHat.pwmI2C.setPin(in1Pin, 0)
+          case .stop               : motorHat.pwmI2C.setPin(in2Pin, 0)
+                                     motorHat.pwmI2C.setPin(in1Pin, 0)
                           
-          //default       : Log.warn("\(self) does not support command \(command)")
         }
       }
       
-      public var command: MotorCommand
-      {
-        get { return currentCommand }
-        
-        set(newCommand)
-        {
-          if(currentCommand != newCommand)
-          {
-            currentCommand = newCommand
-            run(command: currentCommand)
-            Log.info("\(self) set commnad to \(currentCommand)")
-          }
-          else
-          {
-            Log.info("\(self) newCommand == currentCommand")
-          }
-        }
-      }
-      
-      public var power: Int 
+      ///////////////////////
+			/// Protocol motor
+			public var limit: Int 
+			{
+				get 
+			  {
+			  	return 100
+			  }
+			}
+			
+      public var speed: Int 
       {
         get
         {
-          return currentPower
+          return currentSpeed
         }
         
-        set(newPowerLevel)
+        set(newSpeed)
         {
-          if(currentPower != newPowerLevel)
+          if(currentSpeed != newSpeed)
           {
-            currentPower = newPowerLevel.clamped(to: 0 ... 255)
-            motorHat.pwmI2C.send(pwmPin, 0, currentPower * 16)
-            Log.info("\(self) setPower to \(currentPower)")
+            currentSpeed = newSpeed.clamped(to: -100 ... 100)
+						let s = abs(currentSpeed)
+						
+					  if 0 == currentSpeed
+						{
+							run(command: .stop)
+						}
+						else if( currentSpeed > 0) 
+						{
+							run(command: .forward(speed: s))
+						}
+						else
+						{
+							run(command: .reverse(speed: s))
+						}
+						
           }
           else
           {
-            Log.info("\(self) newPowerLevel == currentPowerLevel")
+            Log.warn("\(self) currentSpeed \(currentSpeed) == newSpeed \(newSpeed)")
           }
         }
       }

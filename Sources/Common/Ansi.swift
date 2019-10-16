@@ -1,7 +1,7 @@
 
-class ANSI
+public class ANSI
 {
-  static let esc = "\033["
+  static let esc = "\u{001B}["
   static let black = 30
   static let red = 31
   static let green = 32
@@ -28,4 +28,12 @@ class ANSI
   public class func setForegroundColor(c:Int) -> Void {print("\(esc)\(c)m")}
   public class func setBackgroundColor(c:Int) -> Void {print("\(esc)\(c + 10)m")}
   public class func setTextAttribute(a:Int) -> Void {print("\(esc)\(a)m")}
+    
+  public class func test() -> Void
+  {
+    clearScreen()
+    setCursor(row: 10, col: 10)
+    setForegroundColor(c: blue)
+    print("HelloWorld")
+  }
 }
