@@ -28,8 +28,24 @@ let package = Package(
               .systemLibrary(name: "wiringPi"), 
               .systemLibrary(name: "MPU9250")]
 )
+#elseif os(Linux)
+name: "ScratchingSwift",
+dependencies: [.package(url: "https://github.com/pvieito/PythonKit.git",
+               .branch("master"))],
+targets: [.target(name: "ScratchingSwift",
+                  dependencies: ["PiHardwareInterface",
+                                 "Common",
+                                 "PythonKit",
+                                 "LinuxInput"]),
+          .testTarget(name: "ScratchingSwiftTests",
+                      dependencies: ["ScratchingSwift"]),
+          .target(name: "PiHardwareInterface", 
+                  dependencies: ["Common",
+                                 "Robot"]),
+          .target(name: "Common"),
+          .target(name: "Robot"),
+          .target(name: "LinuxInput")]
 #else
-
 let package = Package(
     name: "ScratchingSwift",
     dependencies: [.package(url: "https://github.com/pvieito/PythonKit.git",

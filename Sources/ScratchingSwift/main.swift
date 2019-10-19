@@ -187,7 +187,9 @@ func testMacanum() -> Void
 {
   let maxL = 100.0
   let sR = Math.NumericScaler<Double>(fromRange: -32676...32676, toRange: 0...(2 * Double.pi))
-  let sV = Math.NumericScaler<Double>(fromRange: -32676...32676, toRange: -100...100)
+  let sV = Math.NumericScaler<Double>(fromRange: -32676...32676, toRange: -200...200) 
+  let sh = Adafruit.ServoHat()
+  let steeringServo = sh.servo(channel: .ch15)
   let js = Joystick(devicePath: "/dev/input/js0") 
   var keepGoing = true
   var x = 0.0
@@ -212,6 +214,8 @@ func testMacanum() -> Void
         case .Axis(0, let v) : x = -sV[Double(v)]
         case .Axis(1, let v) : y = -sV[Double(v)]
         case .Axis(3, let v) : r = -sV[Double(v)]
+        case .Axis(6, let v) where v > 0 : steeringServo.increase(amount: 1)
+				case .Axis(6, let v) where v < 0 : steeringServo.decrease(amount: 1)
         default              : break
       }
     }
@@ -236,7 +240,7 @@ print("Python \(sys.version_info.major).\(sys.version_info.minor)")
 print("Python Version: \(sys.version)")
 print("Python Encoding: \(sys.getdefaultencoding().upper())")
 
-ANSI.test()
+//ANSI.test()
  
 testMacanum()
 //testSenseHat()

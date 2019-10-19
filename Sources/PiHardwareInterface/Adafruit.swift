@@ -202,7 +202,7 @@ public class Adafruit
         {
           if(currentSpeed != newSpeed)
           {
-            currentSpeed = newSpeed.clamped(to: -100 ... 100)
+            currentSpeed = newSpeed.clamped(to: -255 ... 255)
 						let s = abs(currentSpeed)
 						
 					  if 0 == currentSpeed
@@ -281,7 +281,7 @@ public class Adafruit
       {
         let sc = scaler[Double(value)]
         servoHat.pwmI2C.send(channel, 0, Int(sc))
-      }
+      }              
       
     } // class RangedDevice
     
@@ -294,6 +294,16 @@ public class Adafruit
       {
         super.init(channel: channel, servoHat: servoHat, logicalRange: 0...180)
         super.set(value: currentAngle)
+      }
+      
+      public func increase(amount: Int) -> Void
+      {
+        angle = angle + amount
+      }
+      
+      public func decrease(amount: Int) -> Void
+      {
+        angle = angle - amount
       }
       
       public var angle: Int
